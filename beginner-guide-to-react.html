@@ -5,53 +5,31 @@
     <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
     <script type="text/babel">
         function PokemonInfo({pokemonName}) {
-            const [status, setStatus] = React.useState('idle')
             const [pokemon, setPokemon] = React.useState(null)
-            const [error, setError] = React.useState(null)
   
             React.useEffect(() => {
                 if (!pokemonName) {
                     return
                 }
-                setStatus('pending')
-                fetchPokemon(pokemonName).then(
-                    pokemonData => {
-                        setStatus('resolved')
-                        setPokemon(pokemonData)
-                    },
-                    errorData => {
-                        setStatus('rejected')
-                        setError(errorData)
-                    },
-                )
+                fetchPokemon(pokemonName).then(pokemonData => {
+                    setPokemon(pokemonData)
+                })
             }, [pokemonName])
   
-            if (status === 'idle') {
+            if (!pokemonName) {
                 return 'Submit a Pokemon'
             }
   
-            if (status === 'rejected') {
-                return <div>Error: {error && error.message}</div>
-            }
-
-            if (status === 'pending') {
+            if (!pokemon) {
                 return 'Loading...'
             }
-            
-            if (status === 'resolved') {
-                return (
+  
+            return (
                 <>
-                    <pre>{JSON.stringify(pokemon, null, 2)}</pre>
-                    {pokemon && (
-                        <>
-                            <img src={pokemon.sprite} alt={pokemon.key} />
-                            <img src={pokemon.backSprite} alt={pokemon.key} />
-                        </>
-                        )}
+                  <pre>{JSON.stringify(pokemon, null, 2)}</pre>
+                  <img src={pokemon.sprite} alt={pokemon.key} />
                 </>
-                ) 
-            }
-
+            )
         }
   
         function App() {
